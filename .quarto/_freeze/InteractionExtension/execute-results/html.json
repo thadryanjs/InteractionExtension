@@ -1,0 +1,14 @@
+{
+  "hash": "d47abe534b80254670c53a0eca3069f3",
+  "result": {
+    "markdown": "---\ntitle: \"InteractionExtension\"\n---\n\n::: {.cell}\n\n```{.r .cell-code}\n# reproducible R environments\nlibrary(groundhog)\n```\n\n::: {.cell-output .cell-output-stderr}\n```\nLoaded 'groundhog' (version:2.2.0) using R-4.2.2\n```\n:::\n\n::: {.cell-output .cell-output-stderr}\n```\nTips and troubleshooting: https://groundhogR.com\n```\n:::\n\n```{.r .cell-code}\n# dependencies\npkgs <- c(\n  \"dplyr\",\n  \"ggplot2\",\n  \"MASS\"\n)\n\n# activate libraries\nsuppressMessages(groundhog.library(pkgs, \"2023-03-01\"))\n```\n:::\n\n::: {.cell}\n\n```{.r .cell-code}\nset.seed(8675309)\n\n# create a sample sheet\nmeta <- data.frame(\n  sampleID = paste0(\"Sample\", seq(1,9)),\n  river = paste0(\"River\", rep(seq(1,3), each = 3)),\n  site = rep(paste0(\"Site\", c(1,2,3)), 3)\n)\n\nmeta$river_site <- paste(meta$rive, \"-\", meta$site, sep = \"\")\nmeta\n```\n\n::: {.cell-output .cell-output-stdout}\n```\n  sampleID  river  site   river_site\n1  Sample1 River1 Site1 River1-Site1\n2  Sample2 River1 Site2 River1-Site2\n3  Sample3 River1 Site3 River1-Site3\n4  Sample4 River2 Site1 River2-Site1\n5  Sample5 River2 Site2 River2-Site2\n6  Sample6 River2 Site3 River2-Site3\n7  Sample7 River3 Site1 River3-Site1\n8  Sample8 River3 Site2 River3-Site2\n9  Sample9 River3 Site3 River3-Site3\n```\n:::\n:::\n\n\nLet's say there is a river-level correlation. This means:\n\n  - There should be correlation between columns 1-3, 4-6, and 7-9\n\nLet's assume there is a site-level correlation. For instance, perhaps a level of a contaminant is high near the source and decays as you move further down the rive (up in site number). This means:\n\n  - There should be a correlation between `Site1`s.\n\n\n::: {.cell}\n\n```{.r .cell-code}\nsigma <- matrix(\n  c(\n    c(1,2,3),\n    c(4,5,6),\n    c(7,8,9)\n  ),\n  3,3\n)\n\nsigma %>% t\n```\n\n::: {.cell-output .cell-output-stdout}\n```\n     [,1] [,2] [,3]\n[1,]    1    2    3\n[2,]    4    5    6\n[3,]    7    8    9\n```\n:::\n:::\n",
+    "supporting": [],
+    "filters": [
+      "rmarkdown/pagebreak.lua"
+    ],
+    "includes": {},
+    "engineDependencies": {},
+    "preserve": {},
+    "postProcess": true
+  }
+}

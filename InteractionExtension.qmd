@@ -1,0 +1,100 @@
+---
+title: "InteractionExtension"
+---
+
+```{r}
+
+# reproducible R environments
+library(groundhog)
+
+# dependencies
+pkgs <- c(
+  "dplyr",
+  "ggplot2",
+  "MASS", 
+  "Matrix"
+)
+
+# activate libraries
+suppressMessages(groundhog.library(pkgs, "2023-03-01"))
+```
+
+
+
+```{r}
+
+# create a sample sheet
+meta <- data.frame(
+  sampleID = paste0("Sample", seq(1,9)),
+  river = paste0("River", rep(seq(1,3), each = 3)),
+  site = rep(paste0("Site", c(1,2,3)), 3)
+)
+
+meta$river_site <- paste(meta$rive, ":", meta$site, sep = "")
+meta
+```
+
+Let's say there is a river-level correlation. This means:
+
+  - There should be correlation between columns 1-3, 4-6, and 7-9.
+
+Let's assume there is a site-level correlation. For instance, perhaps a level of a contaminant is high near the source and decays as you move further down the rive (up in site number). This means:
+
+  - There should be a correlation between instances of `Site1`s, `Site2`s, and `Site3`s that is steadily decreasing.
+
+```{r}
+meta$river_site
+```
+
+```{r}
+
+sigma <- matrix(
+  c(
+    0.5, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
+    0.0, 0.5, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
+    0.0, 0.0, 0.5, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
+    0.0, 0.0, 0.0, 0.5, 0.0, 0.0, 0.0, 0.0, 0.0,
+    0.0, 0.0, 0.0, 0.0, 0.5, 0.0, 0.0, 0.0, 0.0,
+    0.0, 0.0, 0.0, 0.0, 0.0, 0.5, 0.0, 0.0, 0.0,
+    0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.5, 0.0, 0.0,
+    0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.5, 0.0,
+    0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.5
+  ), 9,9
+) %>% t
+
+sigma %>% data.frame()
+
+(d <- Diagonal(n = 9, x = 0.5))
+```
+
+
+```{r}
+
+
+complexCorMatrix <- function(meta, effect1, effect2)
+{
+
+  n <- ncol(meta)
+
+  effect1_levels <- unique(meta[, effect1])
+  effect2_levels <- unique(meta[, effect2])
+
+  interactions <- paste(meta[, effect1], ":", meta[, effect2], sep = "")
+  
+  n <- length(interactions)
+  
+  df <- data.frame(matrix(0, nrow = n, ncol = n))
+  rownames(df) <- interactions
+  colnames(df) <- interactions
+  df
+}
+
+complexCorMatrix(meta, "river", "site")
+```
+
+
+```{r}
+
+meta
+```
+
