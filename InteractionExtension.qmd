@@ -76,25 +76,47 @@ complexCorMatrix <- function(meta, effect1, effect2)
 
   n <- ncol(meta)
 
-  effect1_levels <- unique(meta[, effect1])
-  effect2_levels <- unique(meta[, effect2])
+  # effect1_levels <- unique(meta[, effect1])
+  # effect2_levels <- unique(meta[, effect2])
 
-  interactions <- paste(meta[, effect1], ":", meta[, effect2], sep = "")
+  interactions <- paste(meta[, effect1$name], ":",
+      meta[, effect2$name], sep = "")
   
   n <- length(interactions)
   
   df <- data.frame(matrix(0, nrow = n, ncol = n))
+
   rownames(df) <- interactions
   colnames(df) <- interactions
-  df
+
+  # iterate through and add the cor conditionally
+  for(i in 1:n){
+    icol <- colnames(df)[i]
+    for(j in 1:n){
+      jcol <- rownames(df)[j]
+    }
+  }
+
 }
 
-complexCorMatrix(meta, "river", "site")
+
+
+complexCorMatrix(meta,
+  list(name = "river", cor = 0.4),
+  list(name = "site", cor = 0.2)
+)
+
 ```
 
 
-```{r}
 
-meta
-```
+
+
+
+
+
+
+
+
+
 
