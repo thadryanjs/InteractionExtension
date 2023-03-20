@@ -50,29 +50,6 @@ meta$river_site
 
 ```{r}
 
-sigma <- matrix(
-  c(
-    0.5, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
-    0.0, 0.5, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
-    0.0, 0.0, 0.5, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
-    0.0, 0.0, 0.0, 0.5, 0.0, 0.0, 0.0, 0.0, 0.0,
-    0.0, 0.0, 0.0, 0.0, 0.5, 0.0, 0.0, 0.0, 0.0,
-    0.0, 0.0, 0.0, 0.0, 0.0, 0.5, 0.0, 0.0, 0.0,
-    0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.5, 0.0, 0.0,
-    0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.5, 0.0,
-    0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.5
-  ), 9,9
-) %>% t
-
-sigma %>% data.frame()
-
-(d <- Diagonal(n = 9, x = 0.5))
-```
-
-
-```{r}
-
-
 complexCorMatrix <- function(meta, effect1, effect2)
 {
 
@@ -86,30 +63,30 @@ complexCorMatrix <- function(meta, effect1, effect2)
   
   n <- length(interactions)
   
-  df <- data.frame(matrix(0, nrow = n, ncol = n))
-
+  # df <- data.frame(matrix(0, nrow = n, ncol = n))
+  df <- data.frame(as.matrix(Diagonal(n, 1)))
   rownames(df) <- interactions
   colnames(df) <- interactions
 
-  # iterate through and add the cor conditionally
-  diagonal <- seq(from = 1, to = (n*n), by = n+1)
-  count <- 1
-  
+
   for(i in 1:n){
     icol <- colnames(df)[i]
     
     for(j in 1:n){
       jcol <- rownames(df)[j]
 
-      for(i in 1:length(effect1_levels)) {
-        if(str_detect(icol, effect1_levels[i])) {
-          df[jcol, icol] <- df[jcol, icol] + effect1$cors[i]
+      if(!(df[jcol, icol]==1)){
+      
+        for(i in 1:length(effect1_levels)) {
+          if(str_detect(icol, effect1_levels[i])) {
+            df[jcol, icol] <- df[jcol, icol] + effect1$cors[i]
+          }
         }
-      }
 
-      for(i in 1:length(effect2_levels)) {
-        if(str_detect(jcol, effect2_levels[i])) {
-          df[jcol, icol] <- df[jcol, icol] + effect2$cors[i]
+        for(i in 1:length(effect2_levels)) {
+          if(str_detect(jcol, effect2_levels[i])) {
+            df[jcol, icol] <- df[jcol, icol] + effect2$cors[i]
+          }
         }
       }
 
@@ -127,9 +104,16 @@ x <- complexCorMatrix(meta,
 )
 ```
 
+```{r}
+x
+```
 
 ```{r}
-ggcorrplot(x, lab = TRUE) 
+ggcorrplot(x,
+  lab = TRUE,
+  type = "lower",
+  colors = c("orange", "white", "#00693e")
+) 
 ```
 
 ```{r}
@@ -143,10 +127,73 @@ ggcorrplot(x, lab = TRUE)
 
 ```{r}
 
+# sigma <- matrix(
+#   c(
+#     0.5, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
+#     0.0, 0.5, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
+#     0.0, 0.0, 0.5, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
+#     0.0, 0.0, 0.0, 0.5, 0.0, 0.0, 0.0, 0.0, 0.0,
+#     0.0, 0.0, 0.0, 0.0, 0.5, 0.0, 0.0, 0.0, 0.0,
+#     0.0, 0.0, 0.0, 0.0, 0.0, 0.5, 0.0, 0.0, 0.0,
+#     0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.5, 0.0, 0.0,
+#     0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.5, 0.0,
+#     0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.5
+#   ), 9,9
+# ) %>% t
 
+# sigma %>% data.frame()
+
+# (d <- Diagonal(n = 9, x = 0.5))
 ```
 
 
+
+
+
+
+
+
+```{r}
+set.seed(1)
+
+x <- runif(100)
+
+x %>% head
+```
+
+```{r}
+
+# compute distance matrix, d_{ij} = |x_i - x_j|
+d <- abs(outer(x,x,"-")) 
+
+d %>% length
+
+d %>% head
+```
+
+```{r}
+
+# length scale
+l <- 1
+```
+
+```{r}
+
+# squared exponential kernel
+Sigma_SE <- exp(-d^2/(2*l^2)) 
+
+Sigma_SE %>% head
+```
+
+```{r}
+
+y <- mvtnorm::rmvnorm(1, sigma = Sigma_SE)
+```
+
+```{r}
+
+plot(x,y)
+```
 
 
 

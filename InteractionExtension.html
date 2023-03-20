@@ -136,61 +136,180 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>pkgs <span class="ot">&lt;-</span> <span class="fu">c</span>(</span>
 <span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>  <span class="st">"dplyr"</span>,</span>
 <span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>  <span class="st">"ggplot2"</span>,</span>
-<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>  <span class="st">"MASS"</span></span>
-<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a><span class="co"># activate libraries</span></span>
-<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a><span class="fu">suppressMessages</span>(<span class="fu">groundhog.library</span>(pkgs, <span class="st">"2023-03-01"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>  <span class="st">"stringr"</span>,</span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>  <span class="st">"ggcorrplot"</span>,</span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>  <span class="st">"MASS"</span>, </span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>  <span class="st">"Matrix"</span></span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a><span class="co"># activate libraries</span></span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a><span class="fu">suppressMessages</span>(<span class="fu">groundhog.library</span>(pkgs, <span class="st">"2023-03-01"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">8675309</span>)</span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="co"># create a sample sheet</span></span>
-<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>meta <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
-<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">sampleID =</span> <span class="fu">paste0</span>(<span class="st">"Sample"</span>, <span class="fu">seq</span>(<span class="dv">1</span>,<span class="dv">9</span>)),</span>
-<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">river =</span> <span class="fu">paste0</span>(<span class="st">"River"</span>, <span class="fu">rep</span>(<span class="fu">seq</span>(<span class="dv">1</span>,<span class="dv">3</span>), <span class="at">each =</span> <span class="dv">3</span>)),</span>
-<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">site =</span> <span class="fu">rep</span>(<span class="fu">paste0</span>(<span class="st">"Site"</span>, <span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">2</span>,<span class="dv">3</span>)), <span class="dv">3</span>)</span>
-<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>meta<span class="sc">$</span>river_site <span class="ot">&lt;-</span> <span class="fu">paste</span>(meta<span class="sc">$</span>rive, <span class="st">"-"</span>, meta<span class="sc">$</span>site, <span class="at">sep =</span> <span class="st">""</span>)</span>
-<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>meta</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># create a sample sheet</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>meta <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">sampleID =</span> <span class="fu">paste0</span>(<span class="st">"Sample"</span>, <span class="fu">seq</span>(<span class="dv">1</span>,<span class="dv">9</span>)),</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">river =</span> <span class="fu">paste0</span>(<span class="st">"River"</span>, <span class="fu">rep</span>(<span class="fu">seq</span>(<span class="dv">1</span>,<span class="dv">3</span>), <span class="at">each =</span> <span class="dv">3</span>)),</span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">site =</span> <span class="fu">rep</span>(<span class="fu">paste0</span>(<span class="st">"Site"</span>, <span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">2</span>,<span class="dv">3</span>)), <span class="dv">3</span>)</span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>meta<span class="sc">$</span>river_site <span class="ot">&lt;-</span> <span class="fu">paste</span>(meta<span class="sc">$</span>rive, <span class="st">":"</span>, meta<span class="sc">$</span>site, <span class="at">sep =</span> <span class="st">""</span>)</span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>meta</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>  sampleID  river  site   river_site
-1  Sample1 River1 Site1 River1-Site1
-2  Sample2 River1 Site2 River1-Site2
-3  Sample3 River1 Site3 River1-Site3
-4  Sample4 River2 Site1 River2-Site1
-5  Sample5 River2 Site2 River2-Site2
-6  Sample6 River2 Site3 River2-Site3
-7  Sample7 River3 Site1 River3-Site1
-8  Sample8 River3 Site2 River3-Site2
-9  Sample9 River3 Site3 River3-Site3</code></pre>
+1  Sample1 River1 Site1 River1:Site1
+2  Sample2 River1 Site2 River1:Site2
+3  Sample3 River1 Site3 River1:Site3
+4  Sample4 River2 Site1 River2:Site1
+5  Sample5 River2 Site2 River2:Site2
+6  Sample6 River2 Site3 River2:Site3
+7  Sample7 River3 Site1 River3:Site1
+8  Sample8 River3 Site2 River3:Site2
+9  Sample9 River3 Site3 River3:Site3</code></pre>
 </div>
 </div>
 <p>Let’s say there is a river-level correlation. This means:</p>
 <ul>
-<li>There should be correlation between columns 1-3, 4-6, and 7-9</li>
+<li>There should be correlation between columns 1-3, 4-6, and 7-9.</li>
 </ul>
 <p>Let’s assume there is a site-level correlation. For instance, perhaps a level of a contaminant is high near the source and decays as you move further down the rive (up in site number). This means:</p>
 <ul>
-<li>There should be a correlation between <code>Site1</code>s.</li>
+<li>There should be a correlation between instances of <code>Site1</code>s, <code>Site2</code>s, and <code>Site3</code>s that is steadily decreasing.</li>
 </ul>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>sigma <span class="ot">&lt;-</span> <span class="fu">matrix</span>(</span>
-<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">c</span>(</span>
-<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">2</span>,<span class="dv">3</span>),</span>
-<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">c</span>(<span class="dv">4</span>,<span class="dv">5</span>,<span class="dv">6</span>),</span>
-<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">c</span>(<span class="dv">7</span>,<span class="dv">8</span>,<span class="dv">9</span>)</span>
-<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>  ),</span>
-<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>  <span class="dv">3</span>,<span class="dv">3</span></span>
-<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>sigma <span class="sc">%&gt;%</span> t</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>meta<span class="sc">$</span>river_site</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>     [,1] [,2] [,3]
-[1,]    1    2    3
-[2,]    4    5    6
-[3,]    7    8    9</code></pre>
+<pre><code>[1] "River1:Site1" "River1:Site2" "River1:Site3" "River2:Site1" "River2:Site2"
+[6] "River2:Site3" "River3:Site1" "River3:Site2" "River3:Site3"</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>complexCorMatrix <span class="ot">&lt;-</span> <span class="cf">function</span>(meta, effect1, effect2)</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>{</span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>  n <span class="ot">&lt;-</span> <span class="fu">ncol</span>(meta)</span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>  effect1_levels <span class="ot">&lt;-</span> <span class="fu">unique</span>(meta[, effect1<span class="sc">$</span>name])</span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>  effect2_levels <span class="ot">&lt;-</span> <span class="fu">unique</span>(meta[, effect2<span class="sc">$</span>name])</span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>  interactions <span class="ot">&lt;-</span> <span class="fu">paste</span>(meta[, effect1<span class="sc">$</span>name], <span class="st">":"</span>,</span>
+<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a>      meta[, effect2<span class="sc">$</span>name], <span class="at">sep =</span> <span class="st">""</span>)</span>
+<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a>  n <span class="ot">&lt;-</span> <span class="fu">length</span>(interactions)</span>
+<span id="cb9-13"><a href="#cb9-13" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb9-14"><a href="#cb9-14" aria-hidden="true" tabindex="-1"></a>  <span class="co"># df &lt;- data.frame(matrix(0, nrow = n, ncol = n))</span></span>
+<span id="cb9-15"><a href="#cb9-15" aria-hidden="true" tabindex="-1"></a>  df <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="fu">as.matrix</span>(<span class="fu">Diagonal</span>(n, <span class="dv">1</span>)))</span>
+<span id="cb9-16"><a href="#cb9-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rownames</span>(df) <span class="ot">&lt;-</span> interactions</span>
+<span id="cb9-17"><a href="#cb9-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">colnames</span>(df) <span class="ot">&lt;-</span> interactions</span>
+<span id="cb9-18"><a href="#cb9-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-19"><a href="#cb9-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-20"><a href="#cb9-20" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span>(i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>n){</span>
+<span id="cb9-21"><a href="#cb9-21" aria-hidden="true" tabindex="-1"></a>    icol <span class="ot">&lt;-</span> <span class="fu">colnames</span>(df)[i]</span>
+<span id="cb9-22"><a href="#cb9-22" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb9-23"><a href="#cb9-23" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span>(j <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>n){</span>
+<span id="cb9-24"><a href="#cb9-24" aria-hidden="true" tabindex="-1"></a>      jcol <span class="ot">&lt;-</span> <span class="fu">rownames</span>(df)[j]</span>
+<span id="cb9-25"><a href="#cb9-25" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-26"><a href="#cb9-26" aria-hidden="true" tabindex="-1"></a>      <span class="cf">if</span>(<span class="sc">!</span>(df[jcol, icol]<span class="sc">==</span><span class="dv">1</span>)){</span>
+<span id="cb9-27"><a href="#cb9-27" aria-hidden="true" tabindex="-1"></a>      </span>
+<span id="cb9-28"><a href="#cb9-28" aria-hidden="true" tabindex="-1"></a>        <span class="cf">for</span>(i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span><span class="fu">length</span>(effect1_levels)) {</span>
+<span id="cb9-29"><a href="#cb9-29" aria-hidden="true" tabindex="-1"></a>          <span class="cf">if</span>(<span class="fu">str_detect</span>(icol, effect1_levels[i])) {</span>
+<span id="cb9-30"><a href="#cb9-30" aria-hidden="true" tabindex="-1"></a>            df[jcol, icol] <span class="ot">&lt;-</span> df[jcol, icol] <span class="sc">+</span> effect1<span class="sc">$</span>cors[i]</span>
+<span id="cb9-31"><a href="#cb9-31" aria-hidden="true" tabindex="-1"></a>          }</span>
+<span id="cb9-32"><a href="#cb9-32" aria-hidden="true" tabindex="-1"></a>        }</span>
+<span id="cb9-33"><a href="#cb9-33" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-34"><a href="#cb9-34" aria-hidden="true" tabindex="-1"></a>        <span class="cf">for</span>(i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span><span class="fu">length</span>(effect2_levels)) {</span>
+<span id="cb9-35"><a href="#cb9-35" aria-hidden="true" tabindex="-1"></a>          <span class="cf">if</span>(<span class="fu">str_detect</span>(jcol, effect2_levels[i])) {</span>
+<span id="cb9-36"><a href="#cb9-36" aria-hidden="true" tabindex="-1"></a>            df[jcol, icol] <span class="ot">&lt;-</span> df[jcol, icol] <span class="sc">+</span> effect2<span class="sc">$</span>cors[i]</span>
+<span id="cb9-37"><a href="#cb9-37" aria-hidden="true" tabindex="-1"></a>          }</span>
+<span id="cb9-38"><a href="#cb9-38" aria-hidden="true" tabindex="-1"></a>        }</span>
+<span id="cb9-39"><a href="#cb9-39" aria-hidden="true" tabindex="-1"></a>      }</span>
+<span id="cb9-40"><a href="#cb9-40" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-41"><a href="#cb9-41" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb9-42"><a href="#cb9-42" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb9-43"><a href="#cb9-43" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-44"><a href="#cb9-44" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-45"><a href="#cb9-45" aria-hidden="true" tabindex="-1"></a>  df</span>
+<span id="cb9-46"><a href="#cb9-46" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb9-47"><a href="#cb9-47" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-48"><a href="#cb9-48" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-49"><a href="#cb9-49" aria-hidden="true" tabindex="-1"></a>x <span class="ot">&lt;-</span> <span class="fu">complexCorMatrix</span>(meta,</span>
+<span id="cb9-50"><a href="#cb9-50" aria-hidden="true" tabindex="-1"></a>  <span class="fu">list</span>(<span class="at">name =</span> <span class="st">"river"</span>, <span class="at">cors =</span> <span class="fu">c</span>(<span class="fl">0.3</span>, <span class="fl">0.4</span>, <span class="fl">0.5</span>)),</span>
+<span id="cb9-51"><a href="#cb9-51" aria-hidden="true" tabindex="-1"></a>  <span class="fu">list</span>(<span class="at">name =</span> <span class="st">"site"</span>, <span class="at">cors =</span> <span class="fu">c</span>(<span class="fl">0.2</span>, <span class="fl">0.3</span>, <span class="fl">0.4</span>))</span>
+<span id="cb9-52"><a href="#cb9-52" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>x</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>             River1:Site1 River1:Site2 River1:Site3 River2:Site1 River2:Site2
+River1:Site1          1.0          0.5          0.5          0.6          0.6
+River1:Site2          0.6          1.0          0.6          0.7          0.7
+River1:Site3          0.7          0.7          1.0          0.8          0.8
+River2:Site1          0.5          0.5          0.5          1.0          0.6
+River2:Site2          0.6          0.6          0.6          0.7          1.0
+River2:Site3          0.7          0.7          0.7          0.8          0.8
+River3:Site1          0.5          0.5          0.5          0.6          0.6
+River3:Site2          0.6          0.6          0.6          0.7          0.7
+River3:Site3          0.7          0.7          0.7          0.8          0.8
+             River2:Site3 River3:Site1 River3:Site2 River3:Site3
+River1:Site1          0.6          0.7          0.7          0.7
+River1:Site2          0.7          0.8          0.8          0.8
+River1:Site3          0.8          0.9          0.9          0.9
+River2:Site1          0.6          0.7          0.7          0.7
+River2:Site2          0.7          0.8          0.8          0.8
+River2:Site3          1.0          0.9          0.9          0.9
+River3:Site1          0.6          1.0          0.7          0.7
+River3:Site2          0.7          0.8          1.0          0.8
+River3:Site3          0.8          0.9          0.9          1.0</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggcorrplot</span>(x,</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">lab =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">type =</span> <span class="st">"lower"</span>,</span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">colors =</span> <span class="fu">c</span>(<span class="st">"orange"</span>, <span class="st">"white"</span>, <span class="st">"#00693e"</span>)</span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="InteractionExtension_files/figure-html/unnamed-chunk-6-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="co"># for(s in c("one", "two", "three")) {</span></span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a><span class="co">#   if(grep("o", s)) {</span></span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a><span class="co">#     print("hello")</span></span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a><span class="co">#   }</span></span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a><span class="co"># }</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="co"># sigma &lt;- matrix(</span></span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a><span class="co">#   c(</span></span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a><span class="co">#     0.5, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,</span></span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a><span class="co">#     0.0, 0.5, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,</span></span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a><span class="co">#     0.0, 0.0, 0.5, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,</span></span>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a><span class="co">#     0.0, 0.0, 0.0, 0.5, 0.0, 0.0, 0.0, 0.0, 0.0,</span></span>
+<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a><span class="co">#     0.0, 0.0, 0.0, 0.0, 0.5, 0.0, 0.0, 0.0, 0.0,</span></span>
+<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a><span class="co">#     0.0, 0.0, 0.0, 0.0, 0.0, 0.5, 0.0, 0.0, 0.0,</span></span>
+<span id="cb14-9"><a href="#cb14-9" aria-hidden="true" tabindex="-1"></a><span class="co">#     0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.5, 0.0, 0.0,</span></span>
+<span id="cb14-10"><a href="#cb14-10" aria-hidden="true" tabindex="-1"></a><span class="co">#     0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.5, 0.0,</span></span>
+<span id="cb14-11"><a href="#cb14-11" aria-hidden="true" tabindex="-1"></a><span class="co">#     0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.5</span></span>
+<span id="cb14-12"><a href="#cb14-12" aria-hidden="true" tabindex="-1"></a><span class="co">#   ), 9,9</span></span>
+<span id="cb14-13"><a href="#cb14-13" aria-hidden="true" tabindex="-1"></a><span class="co"># ) %&gt;% t</span></span>
+<span id="cb14-14"><a href="#cb14-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-15"><a href="#cb14-15" aria-hidden="true" tabindex="-1"></a><span class="co"># sigma %&gt;% data.frame()</span></span>
+<span id="cb14-16"><a href="#cb14-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-17"><a href="#cb14-17" aria-hidden="true" tabindex="-1"></a><span class="co"># (d &lt;- Diagonal(n = 9, x = 0.5))</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">11</span>)</span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>x <span class="ot">=</span> <span class="fu">runif</span>(<span class="dv">100</span>)</span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>d <span class="ot">=</span> <span class="fu">abs</span>(<span class="fu">outer</span>(x,x,<span class="st">"-"</span>)) <span class="co"># compute distance matrix, d_{ij} = |x_i - x_j|</span></span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>l <span class="ot">=</span> <span class="dv">1</span> <span class="co"># length scale</span></span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>Sigma_SE <span class="ot">=</span> <span class="fu">exp</span>(<span class="sc">-</span>d<span class="sc">^</span><span class="dv">2</span><span class="sc">/</span>(<span class="dv">2</span><span class="sc">*</span>l<span class="sc">^</span><span class="dv">2</span>)) <span class="co"># squared exponential kernel</span></span>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a>x_1 <span class="ot">&lt;-</span> <span class="fu">runif</span>(x)</span>
+<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a>y <span class="ot">=</span> mvtnorm<span class="sc">::</span><span class="fu">rmvnorm</span>(<span class="dv">1</span>,<span class="at">sigma=</span>Sigma_SE)</span>
+<span id="cb15-9"><a href="#cb15-9" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(x,y)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="InteractionExtension_files/figure-html/unnamed-chunk-9-1.png" class="img-fluid" width="672"></p>
 </div>
 </div>
 
