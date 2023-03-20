@@ -11,6 +11,8 @@ library(groundhog)
 pkgs <- c(
   "dplyr",
   "ggplot2",
+  "stringr",
+  "ggcorrplot",
   "MASS", 
   "Matrix"
 )
@@ -76,8 +78,8 @@ complexCorMatrix <- function(meta, effect1, effect2)
 
   n <- ncol(meta)
 
-  # effect1_levels <- unique(meta[, effect1])
-  # effect2_levels <- unique(meta[, effect2])
+  effect1_levels <- unique(meta[, effect1$name])
+  effect2_levels <- unique(meta[, effect2$name])
 
   interactions <- paste(meta[, effect1$name], ":",
       meta[, effect2$name], sep = "")
@@ -90,28 +92,59 @@ complexCorMatrix <- function(meta, effect1, effect2)
   colnames(df) <- interactions
 
   # iterate through and add the cor conditionally
+  diagonal <- seq(from = 1, to = (n*n), by = n+1)
+  count <- 1
+  
   for(i in 1:n){
     icol <- colnames(df)[i]
+    
     for(j in 1:n){
       jcol <- rownames(df)[j]
+
+      for(i in 1:length(effect1_levels)) {
+        if(str_detect(icol, effect1_levels[i])) {
+          df[jcol, icol] <- df[jcol, icol] + effect1$cors[i]
+        }
+      }
+
+      for(i in 1:length(effect2_levels)) {
+        if(str_detect(jcol, effect2_levels[i])) {
+          df[jcol, icol] <- df[jcol, icol] + effect2$cors[i]
+        }
+      }
+
     }
   }
 
+
+  df
 }
 
 
-
-complexCorMatrix(meta,
-  list(name = "river", cor = 0.4),
-  list(name = "site", cor = 0.2)
+x <- complexCorMatrix(meta,
+  list(name = "river", cors = c(0.3, 0.4, 0.5)),
+  list(name = "site", cors = c(0.2, 0.3, 0.4))
 )
-
 ```
 
 
+```{r}
+ggcorrplot(x, lab = TRUE) 
+```
+
+```{r}
+
+# for(s in c("one", "two", "three")) {
+#   if(grep("o", s)) {
+#     print("hello")
+#   }
+# }
+```
+
+```{r}
 
 
-
+```
 
 
 
