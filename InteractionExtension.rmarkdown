@@ -6,16 +6,23 @@ title: "InteractionExtension"
 
 # reproducible R environments
 library(groundhog)
+# # doesn't work in groundhog
+library(rstan)
 
 # dependencies
-# groundhog.library("
-  library(dplyr)
-  library(ggplot2)
-  library(ggcorrplot)
-  library(mvtnorm)
-  library(brms)
-# ", date = "2023-03-01")
+pkgs <- c(
+  "dplyr",
+  "ggplot2",
+  "ggcorrplot",
+  "mvtnorm",
+  "Rcpp",
+  "brms"
+)
 
+# activate libraries
+# suppressMessages(
+  groundhog.library(pkgs, "2023-03-01")
+# )
 ```
 
 ```{r}
@@ -91,7 +98,6 @@ var <- decayVariable(100)
 plot(var$x, var$y)
 ```
 
-
 ```{r}
 
 df <- data.frame(
@@ -105,11 +111,12 @@ df %>% head
 ```
 
 ```{r}
+system("g++ -v") 
+
+```
+
+```{r}
 
 m <- brm(response ~ var1 + var2 + gp(var_spacial), data = df)
 ```
 
-
-```{r}
-m %>% summary
-```
